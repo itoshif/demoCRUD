@@ -1,0 +1,78 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    @{
+        ViewData["Title"] = "Add Employee";
+    }
+    <meta charset="utf-8">
+    <title>Add</title>
+    <style>
+        button {
+            margin-right: 10px;
+        }
+        #message{
+            display:none;
+            margin-top=10px;
+        }
+    </style>
+</head>
+    <body>
+    <h1>@ViewData["Title"]</h1>
+    <br />
+    <label for="name">Emp Name : </label>
+    <input type="text" id="name" value="" />
+    <br />
+    <br />
+    <label for="email">Emp Mail: </label>
+    <input type="text" id="email" value="" />
+    <br />
+    <br />
+    <label for="phone">Emp Phone Number : </label>
+    <input type="number" minlength="10" maxlength="10" pattern="[0-9]{10}" id="phone" required/>
+    <br />
+    <br />
+    <button id="addButton">Add</button>
+    <br />
+    <p id="message">Employee Added!</p>
+    <script>
+        const addButton = document.getElementById('addButton');
+        addButton.addEventListener('click', addEmployee);
+        const msg = document.getElementById('message');
+        //funtion to add employee
+        function addEmployee(){
+            const Name = document.getElementById('name').value;
+            const Email=document.getElementById('email').value;
+            const Phone = document.getElementById('phone').value;
+
+            const employee = {
+                name: Name,
+                email: Email,
+                phone: Phone
+            };
+
+            fetch('/Home/AddEmployee', {
+                method: 'POST',
+                headers:{
+                    'Content-Type':'application/json'
+                },
+                body:JSON.stringify(employee)
+             })
+                .then(response =>{
+                    if(!response.ok){
+                        throw new Error('Failed to add employee');
+                    }
+                    return response.json();
+                })
+                .then(data=>{
+                console.log('Employee added successfully', data);
+                    msg.style.display = 'block';
+                })
+                .catch (error=> {
+                console.error('Error adding employee', error);
+            });
+        }
+    </script>
+    </body>
+</html>
+
+

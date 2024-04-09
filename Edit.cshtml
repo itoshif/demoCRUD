@@ -1,0 +1,122 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    @{
+        ViewData["Title"] = "Edit";
+    }
+    <meta charset="utf-8">
+    <title>Add</title>
+    <style>
+        button {
+            margin-right: 10px;
+        }
+        #message{
+            display:none;
+            margin-top=20px;
+        }
+    </style>
+</head>
+<body>
+    <h1>@ViewData["Title"]</h1>
+    <br />
+    <label for="id">Emp Id: </label>
+    <input type="number" id="id" value="" />
+    <br />
+    <br />
+    <label for="name">Emp Name : </label>
+    <input type="text" id="name" value="" />
+    <br />
+    <br />
+    <label for="email">Emp Mail: </label>
+    <input type="text" id="email" value="" />
+    <br />
+    <br />
+    <label for="phone">Emp Phone Number : </label>
+    <input type="text" id="phone" maxlenth="10" pattern="[0-9]{10}" required />
+    <br />
+    <br />
+    <button id="updateButton">Update</button>
+    <button id="deleteButton">Delete</button>
+    <p id="message">Updated!</p>
+    <script>
+        const updateButton = document.getElementById('updateButton');
+        const deleteButton = document.getElementById('deleteButton');
+        const msg = document.getElementById('message');
+
+        //addintt event listeners
+        updateButton.addEventListener('click', updateEmployee);
+        deleteButton.addEventListener('click', deletEmployee);
+
+        //update function
+        function updateEmployee() {
+            const uId = document.getElementById('id').value;
+            const uName = document.getElementById('name').value;
+            const uEmail = document.getElementById('email').value;
+            const uPhone = document.getElementById('phone').value;
+
+            const employee = {
+                Id: uId,
+                Name: uName,
+                Email: uEmail,
+                Phone: uPhone
+            };
+
+            fetch('/Home/UpdateEmployee', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(employee)
+            })
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Failed to update emplopyee');
+                    }
+                    return response.json();
+                })
+
+                .then(data => {
+                    console.log('Employee updated', data);
+                    msg.style.display = 'block';
+                })
+
+                .then(error => {
+                    console.log('Error updating employee', error);
+                });
+        }
+        //delete employee
+        function deletEmployee() {
+            const uId = document.getElementById('id').value;
+
+            const employee = {
+                Id: uId,
+            };
+
+            fetch('/Home/DeleteEmployee', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(employee)
+            })
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Failed to delete emplopyee');
+                    }
+                    return response.json();
+                })
+
+                .then(data => {
+                    console.log('Employee deleted', data);
+                    msg.style.display = 'block';
+                })
+
+                .then(error => {
+                    console.log('Error deleting employee', error);
+                });
+        }
+    </script>
+</body>
+</html>
+
+

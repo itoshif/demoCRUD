@@ -1,0 +1,110 @@
+﻿@model IEnumerable<Emp>
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <title>demoCRUD</title>
+    <style>
+        button {
+            margin-right: 10px;
+        }
+/*         #searchInput {
+            width: 100%;
+            box-sizing: border-box; 
+            padding: 8px; 
+            margin-bottom: 10px; 
+        } */
+        .search {
+            display: flex;
+            align-items: center;
+            width: auto;
+            margin-bottom: 20px; 
+        }
+        .search input[type=text] {
+                width: 90%; 
+                padding: 8px; 
+        }    
+        .search button {
+            float:left;
+            width: 10%;
+           border:none;
+            box-sizing: border-box;
+            }
+    </style>
+
+    </head>
+    <body>
+    @{
+        ViewData["Title"] = "View";
+    }
+    <h1>@ViewData["Title"]</h1>
+    <div class="search">
+        <input type="text" id="searchInput" placeholder="Search.." value=""/>
+        <button onclick="Searchall()">
+           search
+        </button>
+    </div>
+    
+    <table class="table">
+    <thead>
+                <th>Id</th>
+                <th>Name</th>
+                <th>Email</th>
+                <th>Phone</th>
+                <th></th>
+    </thead>
+    <tbody>
+    @foreach (var item in Model) {
+                    <tr>
+                        <td> @item.Id</td>
+                        <td>@item.Name </td>
+                        <td>@item.Email</td>
+                        <td>@item.Phone</td>
+                        <td>
+                            <a href="@Url.Action("Edit","Home")">Edit</a> |
+                            <a href="#" onclick="deleteEmployee(@item.Id); return false;">Delete</a>
+                        </td>
+                    </tr>
+            <tr>          
+            </tr>
+    }   </tbody>
+    </table>
+    <script>
+        //del function..
+        function deleteEmployee(uId) {
+            const employee = {
+                Id: uId,
+            };
+
+            fetch('/Home/DeleteEmployee', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(employee)
+            })
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Failed to delete emplopyee');
+                    }
+                    return response.json();
+                })
+
+                .then(data => {
+                    console.log('Employee deleted', data);
+                    location.reload();
+                })
+
+                .then(error => {
+                    console.log('Error deleting employee', error);
+                });
+        }
+        // saerch button
+        
+        function Searchall() {
+            var Search = document.getElementById('searchInput').value.trim();
+            window.location.href = "/Home/Index?search=" + encodeURIComponent(Search);
+        }
+    </script>
+    </body>
+</html>
